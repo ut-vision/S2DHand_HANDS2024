@@ -19,7 +19,8 @@ The "Single-to-Dual-View Adaptation" aims at adapting a pre-trained single-view 
 The dataset and pre-trained models for this challenge is provided:
 
 - AssemblyHands dataset: https://assemblyhands.github.io/
-- Pre-trained models: 
+- Pre-trained models: https://drive.google.com/file/d/1qmN7CrvPxxW7Kz35dlfadUn4bF_w6hx6/view?usp=sharing
+- Annotaions for this challenge: https://drive.google.com/file/d/1kznE8hg8UQ8gGRRFWAbRfCEqFThAwlNd/view?usp=sharing
 
 ## System requirements
 
