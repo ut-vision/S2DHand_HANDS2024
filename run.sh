@@ -3,13 +3,13 @@
 gpu=0
 
 #Initialize rotation matrix
-#for setup in 0 1
-#do
-#  for pair in 0,1 0,2 0,3 1,2 1,3 2,3
-#  do
-#    python3 initialize_R.py -eid 34 --setup ${setup} --pair ${pair}
-#  done
-#done
+for setup in 0 1
+do
+  for pair in 0,1 0,2 0,3 1,2 1,3 2,3
+  do
+    python3 initialize_R.py -eid 34 --setup ${setup} --pair ${pair}
+  done
+done
 
 #Adaptation under in-dataset scenarios
 for setup in 0 #1

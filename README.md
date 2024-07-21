@@ -55,13 +55,25 @@ Optional: This code will automatically check all invalid data when first run, wh
 ### Initialization
 After downloading the pre-trained weights, run `initialize_R.py` to initialize rotation matrix across all views. The code calculates rotations matrix from predictions of the pre-trained models.
 
+We provide an example in `run.sh`:
+```bash
+#Initialize rotation matrix
+for setup in 0 1
+do
+  for pair in 0,1 0,2 0,3 1,2 1,3 2,3
+  do
+    python3 initialize_R.py -eid PRE_MODEL_ID --setup ${setup} --pair ${pair}
+  done
+done
+```
+
 ### Single-to-Dual-View Adaptation (Training)
 
 `run.sh` provides a complete procedure of training and testing. The `adapt_detnet_dual.py` automatically tests the adapted model after each epoch of adaptation.
 
 We provide several arguments for adaptation:
 
-`--set` indicates the data set to use, which can be set as `val` or `test`. When using test set, evaluation is unavailable.
+`--set` indicates the data set to use, which can be set as `val` or `test`. Because test set annotations are not accessible, evaluation on test set is unavailable when setting `--set=test`.
 
 `-trs` and `-tes`. They represent training and testing dataset, please set it to "ah" (assemblyhands).
 
@@ -90,7 +102,7 @@ We provide several arguments for adaptation:
 For example, run code like:
 
 ```bash
-python3 adapt_detnet_dual.py -trs ah -tes ah --set test --root_idx 0 --pic 1024 --resume -eid 34 --epochs 10 --start_epoch 1 --gpus 0 --checkpoint in_dataset_adapt --setup 0 --pair 1,2
+python3 adapt_detnet_dual.py -trs ah -tes ah --set val --root_idx 0 --pic 1024 --resume -eid 34 --epochs 10 --start_epoch 1 --gpus 0 --checkpoint in_dataset_adapt --setup 0 --pair 1,2
 ```
 
 If first running this code, the `pretrain/ckp_detnet_34.pth` model will be adapted to the camera pair `1,2` of headset 0. 1024 images pairs will be used and there are 10 adaptation epochs in total.
