@@ -372,7 +372,7 @@ def validate(val_loader, model, criterion, key, epoch, args, R, stop=-1, write_e
         if not os.path.exists(os.path.dirname(logpath)):
             os.makedirs(os.path.dirname(logpath))
         fw = open(logpath, 'w')
-        fw.write(f'img seq cam frame pred gt\n')
+        fw.write(f'img seq cam frame pred gt valid camrot campos focal pricpt hand pred_trans gt_trans\n')
 
     with torch.no_grad():
         for i, (metas1, metas2) in tqdm(enumerate(val_loader)):
@@ -399,18 +399,27 @@ def validate(val_loader, model, criterion, key, epoch, args, R, stop=-1, write_e
             gt_joint2 = func.to_numpy(targets2['joint'])
 
             if args.set in ['val', 'train']:
-                gt_joint1, pred_joint_align1 = align.global_align(gt_joint1, pred_joint1, key=key,
-                                                                  root_idx=args.root_idx)
-                gt_joint2, pred_joint_align2 = align.global_align(gt_joint2, pred_joint2, key=key,
-                                                                  root_idx=args.root_idx)
+                gt_joint1, pred_joint_align1, \
+                    gt_joint_tr1, pred_joint_align_tr1 = align.global_align(gt_joint1, pred_joint1, key=key,
+                                                                            root_idx=args.root_idx)
+                gt_joint2, pred_joint_align2, \
+                    gt_joint_tr2, pred_joint_align_tr2 = align.global_align(gt_joint2, pred_joint2, key=key,
+                                                                            root_idx=args.root_idx)
             else:
-                pred_joint_align1, pred_joint_align2 = align.global_align(pred_joint1, pred_joint2, key=key,
-                                                                          root_idx=args.root_idx)
+                pred_joint_align1, pred_joint_align2, \
+                    pred_joint_align_tr1, pred_joint_align_tr2 = align.global_align(pred_joint1, pred_joint2, key=key,
+                                                                                    root_idx=args.root_idx)
+                gt_joint_tr1, gt_joint_tr2 = gt_joint1, gt_joint2
             valid1, valid2 = metas1['vis'].numpy(), metas2['vis'].numpy()
+
             gt_joint1 *= 1000.
-            pred_joint_align1 *= 1000
+            gt_joint_tr1 *= 1000.
             gt_joint2 *= 1000.
+            gt_joint_tr2 *= 1000.
+            pred_joint_align1 *= 1000
+            pred_joint_align_tr1 *= 1000.
             pred_joint_align2 *= 1000
+            pred_joint_align_tr2 *= 1000.
 
             # TODO: find a better merging strategy
             # Average predictions from both views
@@ -428,10 +437,31 @@ def validate(val_loader, model, criterion, key, epoch, args, R, stop=-1, write_e
             if args.evaluate or write_epoch:
                 pred_joint_align = func.cross_merge_two_vec(pred_joint_align1, pred_joint_align2)
                 gt_joint = func.cross_merge_two_vec(gt_joint1, gt_joint2)
+                pred_joint_align_tr = func.cross_merge_two_vec(pred_joint_align_tr1, pred_joint_align_tr2)
+                gt_joint_tr = func.cross_merge_two_vec(gt_joint_tr1, gt_joint_tr2)
                 pred1d, gt1d = pred_joint_align.reshape(-1, 21 * 3), gt_joint.reshape(-1, 21 * 3)
+                pred1d_tr, gt1d_tr = pred_joint_align_tr.reshape(-1, 21 * 3), gt_joint_tr.reshape(-1, 21 * 3)
 
                 bs = len(pred_joint_align1)
                 valid = func.cross_merge_two_vec(valid1, valid2)
+
+                fcl1, prcpt1 = metas1['cam_param']['focal'], metas1['cam_param']['princpt']
+                focal1d1 = [[fcl1[0][f].numpy(), fcl1[1][f].numpy()] for f in range(bs)]
+                fcl2, prcpt2 = metas2['cam_param']['focal'], metas2['cam_param']['princpt']
+                focal1d2 = [[fcl2[0][f].numpy(), fcl2[1][f].numpy()] for f in range(bs)]
+                focal1d = func.cross_merge_two_list(focal1d1, focal1d2)
+
+                princpt1d1 = [[prcpt1[0][f].numpy(), prcpt1[1][f].numpy()] for f in range(bs)]
+                princpt1d2 = [[prcpt2[0][f].numpy(), prcpt2[1][f].numpy()] for f in range(bs)]
+                princpt1d = func.cross_merge_two_list(princpt1d1, princpt1d2)
+
+                rot1d1 = [f.numpy().reshape(-1) for f in metas1['cam_param']['rot']]
+                rot1d2 = [f.numpy().reshape(-1) for f in metas2['cam_param']['rot']]
+                rot1d = func.cross_merge_two_list(rot1d1, rot1d2)
+
+                pos1d1 = [f.numpy().reshape(-1) for f in metas1['cam_param']['pos']]
+                pos1d2 = [f.numpy().reshape(-1) for f in metas2['cam_param']['pos']]
+                pos1d = func.cross_merge_two_list(pos1d1, pos1d2)
 
                 frame_ls = func.cross_merge_two_list(metas1['frame'], metas2['frame'])
                 seq_ls = func.cross_merge_two_list(metas1['seq_name'], metas2['seq_name'])
@@ -445,9 +475,15 @@ def validate(val_loader, model, criterion, key, epoch, args, R, stop=-1, write_e
                     p = ','.join([str(u) for u in pred1d[l]])
                     g = ','.join([str(u) for u in gt1d[l]])
                     v = ','.join([str(u) for u in valid[l]])
+                    rot = ','.join([str(u) for u in rot1d[l]])
+                    pos = ','.join([str(u) for u in pos1d[l]])
+                    fo = ','.join([str(u) for u in focal1d[l]])
+                    pr = ','.join([str(u) for u in princpt1d[l]])
+                    p_tr = ','.join([str(u) for u in pred1d_tr[l]])
+                    g_tr = ','.join([str(u) for u in gt1d_tr[l]])
 
                     fw.write(' '.join(
-                        [img, seq, cam, str(frame.numpy()), p, g, v]) + '\n')
+                        [img, seq, cam, str(frame.numpy()), p, g, v, rot, pos, fo, pr, hand, p_tr, g_tr]) + '\n')
                     count += 1
 
             if stop != -1 and i >= stop:

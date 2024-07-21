@@ -33,7 +33,7 @@ def visualize_3d_joints(idx, checkpoint, eid=37, setup='set0', pair='0,1', is_gt
     R_config = json.load(open('./R_config.json'))
     R12 = np.array(R_config[f'set{setup}-{pair}']['R_gt'])
 
-    crop_root = './data/assemblyhands_crop/images/ego_images_rectified/test/'
+    crop_root = './data/assemblyhands_crop/images/ego_images_rectified/val/'
     log = os.path.join(checkpoint, f'{eid}-set{setup}-{pair}.log')
     lines = open(log).readlines()
     lines.pop(0)
@@ -50,8 +50,8 @@ def visualize_3d_joints(idx, checkpoint, eid=37, setup='set0', pair='0,1', is_gt
         print(name)
         img = cv2.imread(name)
 
-        gt = np.array(line[5].split(',')).astype(np.float64).reshape(JNUM, 3)
-        pred = np.array(line[4].split(',')).astype(np.float64).reshape(JNUM, 3)
+        gt = np.array(line[13].split(',')).astype(np.float64).reshape(JNUM, 3)
+        pred = np.array(line[12].split(',')).astype(np.float64).reshape(JNUM, 3)
         visual_joints = gt if is_gt else pred
 
         focal = np.array(line[9].split(',')).astype(np.float64)
@@ -105,13 +105,13 @@ def visualize_3d_joints(idx, checkpoint, eid=37, setup='set0', pair='0,1', is_gt
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PyTorch Train: DetNet')
     # Dataset setting
-    parser.add_argument('--checkpoint', type=str, default='visualize/evaluation/ah',
+    parser.add_argument('--checkpoint', type=str, default='in_dataset_adapt/evaluation/ah',
                         help='save dir of the test logs')
     parser.add_argument('--setup', type=int, default=0, help='id of headset')
-    parser.add_argument('--pair', type=str, default='1,2', help='id of dual-camera pair')
-    parser.add_argument('-eid', '--evaluate_id', default=37, type=int, metavar='N',
+    parser.add_argument('--pair', type=str, default='0,1', help='id of dual-camera pair')
+    parser.add_argument('-eid', '--evaluate_id', default=6, type=int, metavar='N',
                         help='number of data loading workers (default: 8)')
-    parser.add_argument('--sample_idx', type=int, default=18, help='id of visualized sample')
+    parser.add_argument('--sample_idx', type=int, default=8, help='id of visualized sample')
     args = parser.parse_args()
 
     sample_idx = args.sample_idx
