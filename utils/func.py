@@ -202,8 +202,8 @@ def avg_pred(preds, valids, vmax=None):
 
     for i in range(valids.shape[1]):
         if np.sum(valids[:, i]) == 0:
-            valids[:, i] = 1
-        valids[:, i] /= np.sum(valids[:, i])
+            valids[:, i] = 1.
+        valids[:, i] = valids[:, i] / np.sum(valids[:, i])
 
     preds *= valids
 

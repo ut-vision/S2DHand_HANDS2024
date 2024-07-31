@@ -23,7 +23,7 @@ def generate_pred(log_dir, savepath, epoch=10):
         "annotations": {}
     }
 
-    logs = glob.glob(os.path.join(log_dir, f'{epoch}*.log'))
+    logs = glob.glob(os.path.join(log_dir, f'{epoch}-*.log'))
     # print(logs)
 
     for log in logs:
