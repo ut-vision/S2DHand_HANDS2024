@@ -139,7 +139,7 @@ where the `--evaluation_dir` is the directory to store test logs, `-eid` is the 
 
 **Please refer to the script `run.sh` for the whole process.**
 ### Visualization
-Run `visualize.py` for visualization. However, cropped assemblyhands images are required. Please refer [here](https://drive.google.com/file/d/1hhfzHzlhjKFLkhgkxKRG_W7rc-2eFwWy/view?usp=sharing) for our cropped images.
+Run `visualize.py` for visualization. However, cropped assemblyhands images are required. Please refer [here](https://drive.google.com/file/d/14Cx3scq6PqlcvWVnfd3EsH-ML-NbK71E/view?usp=sharing) for our cropped images.
 
 Please run the following command to register the cropped data for visualization.
 ```
