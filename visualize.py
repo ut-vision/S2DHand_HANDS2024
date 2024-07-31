@@ -64,15 +64,6 @@ def visualize_3d_joints(idx, checkpoint, eid=37, setup='set0', pair='0,1', is_gt
         ps.append(pricpt)
         valids.append(valid)
 
-    if eid not in [37, 68]:  # These are the index of pre-trained models
-        anchors = [joints[k][0, :] for k in range(len(joints))]
-        joint0_align = joints[0] - joints[0][0, :]
-        joint1_align = joints[1] - joints[1][0, :]
-        merge0, merge1 = func.merge_from_2hands(joint0_align[np.newaxis, :, :], joint1_align[np.newaxis, :, :],
-                                                valids[0][np.newaxis, :], valids[1][np.newaxis, :], R12=R12, R21=R12.T)
-        merge0, merge1 = merge0.squeeze(0), merge1.squeeze(0)
-        joints = [merge0 + anchors[0], merge1 + anchors[1]]
-
     for i in range(2):
         img, visual_joints, focal, pricpt = imgs[i], joints[i], fs[i], ps[i]
         kp = cam2pixel(visual_joints, focal, pricpt).astype(np.int32)

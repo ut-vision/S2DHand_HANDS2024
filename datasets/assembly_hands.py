@@ -94,7 +94,8 @@ class AssemblyHandsDataset(torch.utils.data.Dataset):
             print(">>> DEBUG MODE: Loading val data during training")
             data_mode = "val"
         self.invalid_data_file = os.path.join(
-            self.annot_path, data_mode, f"invalid_{data_mode}_{self.modality}.txt"
+            self.annot_path, data_mode + "_HANDS2024" if data_mode == 'test' else data_mode,
+            f"invalid_{data_mode}_{self.modality}.txt"
         )
         db = COCO(
             osp.join(
