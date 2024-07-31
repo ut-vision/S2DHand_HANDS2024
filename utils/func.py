@@ -410,7 +410,7 @@ def stb_from_2hands(hands1, hands2, valids1, valids2, R0):
         except:
             valids1[i, :] = 0.
             valids2[i, :] = 0.
-            print('invalid occur')
+            # print('invalid occur')
 
         joints1, joints2 = [], []
         idx = 0
