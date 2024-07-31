@@ -20,12 +20,15 @@ The dataset and pre-trained models for this challenge is provided:
 
 - AssemblyHands dataset: https://assemblyhands.github.io/
 - Pre-trained models: https://drive.google.com/file/d/1qmN7CrvPxxW7Kz35dlfadUn4bF_w6hx6/view?usp=sharing
-- Annotaions for this challenge: 
+- Test images and annotaions for this challenge: https://drive.google.com/file/d/1xpJoVPYpFGQEK8KJ_m4cacEbbsTuV0yr/view?usp=sharing,https://drive.google.com/file/d/1kxC0IMfe0iGzxZCbiins5q_A58gxLhOZ/view?usp=sharing 
 
 ## System requirements
 
 * Only Linux is tested.
 * 64-bit Python 3.10 installation. 
+
+## Goal of this challenge
+Achieving better accuracy on each dual-camera pair of the test set (data folder "test_HANDS2024"). The metric will be accuracy among all 12 dual-camera pairs.
 
 ## Playing with pre-trained networks and training
 
@@ -37,7 +40,12 @@ Please download the pre-trained models and AssemblyHands dataset first. Assuming
 - ${DATA_DIR}
     - AsseblyHands
         - annotations
-        - images      
+            - test_HANDS2024
+            - val
+        - images   
+            - ego_images_rectified
+                - test_HANDS2024
+                - val  
     - pretrain 
         - ckp_detnet_32.pth
         - ckp_detnet_34.pth
@@ -51,7 +59,7 @@ mkdir data/assemblyhands
 ln -s ${DATA_DIR}/AssemblyHands/* data/assemblyhands
 ```
 
-Optional: This code will automatically check all invalid data when first run, which takes lots of time. To save time, you can download the pre-generated invalid.txt [here](https://drive.google.com/file/d/19wZ0qaB6VivI7JxN-1Wlr0LP3aVHzRt8/view?usp=sharing) and move it to `${DATA_DIR}/AssemblyHands/annotations/${split}`. For example, move `invalid_train_ego.txt` to `${DATA_DIR}/AssemblyHands/annotations/train`.  
+Optional: This code will automatically check all invalid data when first run, which takes lots of time. To save time, you can download the pre-generated invalid.txt [here](https://drive.google.com/file/d/1ntSSfovvbUarvBmXDhCrWrNlrTWpVwpb/view?usp=sharing) and move it to `${DATA_DIR}/AssemblyHands/annotations/${split}`. For example, move `invalid_train_ego.txt` to `${DATA_DIR}/AssemblyHands/annotations/train`.  
 ### Initialization
 After downloading the pre-trained weights, run `initialize_R.py` to initialize rotation matrix across all views. The code calculates rotations matrix from predictions of the pre-trained models.
 
@@ -73,7 +81,9 @@ done
 
 We provide several arguments for adaptation:
 
-`--set` indicates the data set to use, which can be set as `val` or `test`. Because test set annotations are not accessible, evaluation on test set is unavailable when setting `--set=test`.
+`--set` indicates the data set to use, which can be set as `val` or `test`. 
+
+**Because test set annotations are not accessible, evaluation results will be "nan" when setting `--set=test`. But kindly set `--set=test` to generate predictions for the final results on set "test_HANDS2024"**
 
 `-trs` and `-tes`. They represent training and testing dataset, please set it to "ah" (assemblyhands).
 
