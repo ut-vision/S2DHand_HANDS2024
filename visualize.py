@@ -30,8 +30,8 @@ colors = {
 
 def visualize_3d_joints(idx, checkpoint, eid=37, setup='set0', pair='0,1', is_gt=False):
     JNUM = 21
-    R_config = json.load(open('./R_config.json'))
-    R12 = np.array(R_config[f'set{setup}-{pair}']['R_gt'])
+    # R_config = json.load(open('./R.json'))
+    # R12 = np.array(R_config[f'set{setup}-{pair}']['R_gt'])
 
     crop_root = './data/assemblyhands_crop/images/ego_images_rectified/val/'
     log = os.path.join(checkpoint, f'{eid}-set{setup}-{pair}.log')
