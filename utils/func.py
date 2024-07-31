@@ -1,3 +1,4 @@
+import numpy as np
 from torchvision.transforms.functional import *
 import config as cfg
 from scipy.optimize import minimize
@@ -316,6 +317,10 @@ def avg_R_from_2poses(hands1, hands2, valids1, valids2, is_torch=False, quatn_mo
     for i in range(hands1.shape[0]):
         pred1, pred2 = hands1[i], hands2[i]
         p1, p2 = [], []
+
+        if np.all(valids1[i, :] == 0) or np.all(valids2[i, :] == 0):
+            valids1[i, :] = 1.
+            valids2[i, :] = 1.
         for j in range(pred1.shape[0]):
             if valids1[i, j] and valids2[i, j]:
                 p1.append(pred1[j])
@@ -396,11 +401,16 @@ def stb_from_2hands(hands1, hands2, valids1, valids2, R0):
                 p2.append(pred2[j])
 
         x_in = np.array([p1, p2])
-        results = minimize(objective, x_in, args=R0, method='BFGS', options={'maxiter': 20})
-        opt_pred = results.x
-        # print(f'======{results.fun}======')
-        l = len(opt_pred)
-        j1, j2 = np.array(opt_pred[:l // 2]).reshape(-1, 3), np.array(opt_pred[l // 2:]).reshape(-1, 3)
+        try:
+            results = minimize(objective, x_in, args=R0, method='BFGS', options={'maxiter': 20})
+            opt_pred = results.x
+            # print(f'======{results.fun}======')
+            l = len(opt_pred)
+            j1, j2 = np.array(opt_pred[:l // 2]).reshape(-1, 3), np.array(opt_pred[l // 2:]).reshape(-1, 3)
+        except:
+            valids1[i, :] = 0.
+            valids2[i, :] = 0.
+            print('invalid occur')
 
         joints1, joints2 = [], []
         idx = 0
