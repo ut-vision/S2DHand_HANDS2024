@@ -20,7 +20,7 @@ The dataset and pre-trained models for this challenge is provided:
 
 - AssemblyHands dataset: https://assemblyhands.github.io/
 - Pre-trained models: https://drive.google.com/file/d/1qmN7CrvPxxW7Kz35dlfadUn4bF_w6hx6/view?usp=sharing
-- Submission code: https://github.com/MickeyLLG/AssemblyHands-S2D-submission
+- Submission code: https://github.com/ut-vision/ECCV2024-AssemblyHands-S2D
 
 ## System requirements
 
