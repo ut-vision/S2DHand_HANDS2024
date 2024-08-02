@@ -1,4 +1,4 @@
-ECCV HANDS2024: Single-to-Dual-View Adaptation Challenge
+ECCV HANDS2024: AssemblyHands-S2D Challenge
 ---
 
 This is the baseline method for the **ECCV HANDS2024: Single-to-Dual-View Adaptation Challenge**. 
